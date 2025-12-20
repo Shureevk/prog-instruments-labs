@@ -184,6 +184,10 @@ ALL = "All"
 ADVANTAGE = "Advantage"
 WIN_FOR = "Win for"
 
+# Константы для бизнес-логики
+MIN_SCORE_FOR_ADVANTAGE = 4
+MIN_WIN_DIFFERENCE = 2
+
 
 class TennisGameRefactored:
     """Рефакторинг версия игры в теннис."""
@@ -203,12 +207,21 @@ class TennisGameRefactored:
 
     def score(self):
         """Возвращает текущий счет игры."""
-        if self.player1_score == self.player2_score:
+        if self._is_equal_score():
             return self._get_equal_score()
-        elif self.player1_score >= 4 or self.player2_score >= 4:
+        elif self._is_advantage_or_win_situation():
             return self._get_advantage_or_win_score()
         else:
             return self._get_regular_score()
+
+    def _is_equal_score(self):
+        """Проверяет, равны ли очки игроков."""
+        return self.player1_score == self.player2_score
+
+    def _is_advantage_or_win_situation(self):
+        """Проверяет, является ли ситуация преимуществом или победой."""
+        return (self.player1_score >= MIN_SCORE_FOR_ADVANTAGE or
+                self.player2_score >= MIN_SCORE_FOR_ADVANTAGE)
 
     def _get_equal_score(self):
         """Обрабатывает ситуации равного счета."""
@@ -221,19 +234,46 @@ class TennisGameRefactored:
         """Обрабатывает ситуации преимущества и победы."""
         score_difference = self.player1_score - self.player2_score
 
-        if score_difference == 1:
-            return f"{ADVANTAGE} {self.player1_name}"
-        elif score_difference == -1:
-            return f"{ADVANTAGE} {self.player2_name}"
-        elif score_difference >= 2:
-            return f"{WIN_FOR} {self.player1_name}"
-        else:
-            return f"{WIN_FOR} {self.player2_name}"
+        if abs(score_difference) == 1:
+            leading_player = (self.player1_name if score_difference > 0
+                              else self.player2_name)
+            return f"{ADVANTAGE} {leading_player}"
+        elif abs(score_difference) >= MIN_WIN_DIFFERENCE:
+            winning_player = (self.player1_name if score_difference > 0
+                              else self.player2_name)
+            return f"{WIN_FOR} {winning_player}"
 
     def _get_regular_score(self):
         """Обрабатывает обычные ситуации счета (до 40-40)."""
         scores = [LOVE, FIFTEEN, THIRTY, FORTY]
         return f"{scores[self.player1_score]}-{scores[self.player2_score]}"
+
+
+def create_tennis_game(player1_name, player2_name, implementation="refactored"):
+    """
+    Фабричный метод для создания экземпляра игры в теннис.
+
+    Args:
+        player1_name: Имя первого игрока
+        player2_name: Имя второго игрока
+        implementation: Реализация игры. Возможные значения:
+            - "refactored": Рефакторинг версия (по умолчанию)
+            - "v1": Первая версия
+            - "v2": Вторая версия
+            - "v3": Третья версия
+
+    Returns:
+        Экземпляр игры в теннис
+    """
+    implementations = {
+        "refactored": TennisGameRefactored,
+        "v1": TennisGameDefactored1,
+        "v2": TennisGameDefactored2,
+        "v3": TennisGameDefactored3
+    }
+
+    game_class = implementations.get(implementation, TennisGameRefactored)
+    return game_class(player1_name, player2_name)
 
 
 # Сохранение обратной совместимости

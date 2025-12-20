@@ -3,7 +3,7 @@ import re
 from checksum import calculate_checksum, serialize_result
 from consts import *
 
-
+# Попытка 2
 def load_data(file_path: str, delimiter: str = CSV_DELIMITER) -> list[list[str]]:
     encodings = ['utf-8-sig', 'utf-16', 'windows-1251', 'cp1251', 'latin-1']
 

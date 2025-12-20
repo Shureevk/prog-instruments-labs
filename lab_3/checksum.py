@@ -2,7 +2,7 @@ import json
 import hashlib
 from typing import List
 
-
+# Попытка 2
 def calculate_checksum(row_numbers: List[int]) -> str:
     row_numbers.sort()
     return hashlib.md5(json.dumps(row_numbers).encode('utf-8')).hexdigest()

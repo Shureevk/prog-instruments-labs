@@ -1,5 +1,6 @@
 import re
 
+# Попытка 2
 TELEPHONE_PATTERN = r"^\+7-\([0-9]{3}\)-[0-9]{3}-[0-9]{2}-[0-9]{2}$"
 HTTP_STATUS_PATTERN = r"^(?:1|2|3|4|5)\d{2} [A-Za-z][A-Za-z0-9 \-]*$"
 SNILS_PATTERN = r"^\d{11}$"
